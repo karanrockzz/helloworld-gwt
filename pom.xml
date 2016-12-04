@@ -85,7 +85,7 @@
           <modules>
             <module>uk.co.monodot.server</module>
           </modules>
-          <webappDirectory>${project.build.directory}/ROOT</webappDirectory>
+          <warName>ROOT</warName>
         </configuration>
       </plugin>
     </plugins>
