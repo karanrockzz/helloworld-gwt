@@ -1,14 +1,16 @@
 # helloworld-gwt
 A simple Hello World application in GWT, using the gwt-maven-plugin Maven archetype
 
-To build and run locally:
+---
+
+## To build and run locally
 
     mvn clean install
     mvn gwt:run
 
 ---
 
-To deploy and run inside OpenShift:
+## To deploy and run inside OpenShift
 
 First ensure that the JBoss OpenShift imagestreams are installed into the `openshift` namespace:
 
