@@ -20,7 +20,6 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <webappDirectory>${project.build.directory}/ROOT</webappDirectory>
   </properties>
 
   <dependencyManagement>
@@ -86,6 +85,7 @@
           <modules>
             <module>uk.co.monodot.server</module>
           </modules>
+          <webappDirectory>${project.build.directory}/ROOT</webappDirectory>
         </configuration>
       </plugin>
     </plugins>
