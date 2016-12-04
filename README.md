@@ -26,5 +26,5 @@ Expose a route for the service:
 
 Now you can access the application using (e.g.):
 
-    http://helloworld-gwt-foo.192.168.99.101.xip.io/helloworld-gwt-1.0-SNAPSHOT/ 
+    http://helloworld-gwt-myproject.192.168.99.101.xip.io/
 
