@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="server">
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='uk.co.monodot.server' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/server/greet" class="uk.co.monodot.server.GreetingServiceImpl" />
+
+</module>
