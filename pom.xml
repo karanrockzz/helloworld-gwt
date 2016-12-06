@@ -20,10 +20,31 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <fabric8.version>2.2.0.redhat-079</fabric8.version>
+    <docker.maven.plugin.version>0.14.0</docker.maven.plugin.version>
+
+    <docker.from>registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift</docker.from>
+    <fabric8.dockerUser>fabric8/</fabric8.dockerUser>
+    <docker.image>${fabric8.dockerUser}${project.artifactId}:${project.version}</docker.image>
+
+    <fabric8.service.name>helloworld-gwt</fabric8.service.name>
+    <fabric8.service.port>9102</fabric8.service.port>
+    <fabric8.service.containerPort>8080</fabric8.service.containerPort>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+
+      <!-- fabric8 bom must be before fabric8 bom -->
+      <dependency>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-project-bom-with-platform-deps</artifactId>
+        <version>${fabric8.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+ 
       <dependency>
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt</artifactId>
@@ -65,6 +86,28 @@
 
     <plugins>
 
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-maven-plugin</artifactId>
+        <version>${fabric8.version}</version>
+        <executions>
+          <execution>
+            <id>json</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>json</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>attach</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Mojo's Maven Plugin for GWT -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -98,7 +141,62 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${docker.maven.plugin.version}</version>
+        <configuration>
+          <images>
+            <image>
+              <name>${docker.image}</name>
+              <build>
+                <from>${docker.from}</from>
+                <ports>
+                  <port>80</port>
+                </ports>
+                <assembly>
+                  <basedir>/deployments</basedir>
+                  <descriptorRef>rootWar</descriptorRef>
+                </assembly>
+              </build>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
+      
+
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>f8-build</id>
+      <build>
+        <defaultGoal>clean install docker:build fabric8:json</defaultGoal>
+      </build>
+    </profile>
+    <profile>
+      <id>f8-deploy</id>
+      <properties>
+        <fabric8.imagePullPolicySnapshot>Always</fabric8.imagePullPolicySnapshot>
+        <fabric8.recreate>true</fabric8.recreate>
+      </properties>
+      <build>
+        <defaultGoal>clean install docker:build docker:push fabric8:json fabric8:apply</defaultGoal>
+      </build>
+    </profile>
+    <profile>
+      <id>f8-local-deploy</id>
+      <properties>
+        <fabric8.recreate>true</fabric8.recreate>
+      </properties>
+      <build>
+        <defaultGoal>clean install docker:build fabric8:json fabric8:apply</defaultGoal>
+      </build>
+    </profile>
+  </profiles>
+
+
+
 
 </project>
